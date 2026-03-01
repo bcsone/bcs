@@ -390,15 +390,18 @@
   }
 
   @media (max-width: 900px) {
+    #founder { padding: 4rem 5%; }
     .founder-inner { grid-template-columns: 1fr; gap: 3rem; }
     .founder-stat-row { grid-template-columns: 1fr 1fr; }
-    #founder::before { font-size: 40vw; }
+    #founder::before { font-size: 40vw; opacity: 0.02; }
     .svc-item { grid-template-columns: 44px 1fr; gap: 1.2rem; padding: 1.6rem 0.5rem; }
     .svc-arrow { display: none; }
     .svc-body { gap: 1rem; }
     .svc-text p { display: none; }
     .svc-tags-row { display: none; }
     .founder-name { font-size: clamp(2.5rem, 8vw, 4rem); }
+    /* Fix: Ensuring quote is visible and responsive on tablets if needed, or keeping it hidden for clean mobile view */
+    .founder-quote { padding: 1.5rem; }
   }
 
   /* ── WHY US ── */
@@ -553,7 +556,7 @@
     .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); }
     .process-steps::before { display: none; }
     .about-visual { aspect-ratio: 16/9; }
-    .founder-quote { display: none; }
+    /* Fix: Only hide quote on very small screens, or keep layout consistent */
     #hero { padding: 7rem 5% 4rem; }
   }
 
@@ -569,6 +572,7 @@
     section { padding: 4rem 5%; }
     .founder-stat-row { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
     .f-stat-num { font-size: 2rem; }
+    .founder-quote { display: none; } /* Hide quote only on mobile for space */
   }
 
   /* ── SCROLL ANIMATIONS ── */
@@ -881,6 +885,10 @@
           <div class="f-stat-label">Client Retention Rate</div>
         </div>
       </div>
+      <div class="founder-quote">
+        <p>Expert guidance is the catalyst that turns raw ambition into market leadership.</p>
+        <cite>— Prithvi Bhushan</cite>
+      </div>
     </div>
   </div>
 </section>
@@ -997,12 +1005,10 @@
       <p style="color:var(--gray);font-size:0.88rem;margin-bottom:1.5rem">Fill out the form and we'll get back to you within 24 hours.</p>
 
       <form id="contactForm">
-        <!-- Web3Forms: paste your access key below (get it free at web3forms.com) -->
         <input type="hidden" name="access_key" value="51e934df-a20b-4981-87b5-bfdeb439bbe6">
         <input type="hidden" name="subject" value="New BCS Website Inquiry">
         <input type="hidden" name="from_name" value="BCS Website">
         <input type="hidden" name="redirect" value="false">
-        <!-- Honeypot spam protection -->
         <input type="checkbox" name="botcheck" style="display:none">
 
         <div class="form-row">
@@ -1117,7 +1123,7 @@
     links.style.gap = '1rem';
   });
 
-  // Form submit — Web3Forms (free, no subscription)
+  // Form submit — Web3Forms
   document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -1179,4 +1185,3 @@
 </script>
 </body>
 </html>
-
