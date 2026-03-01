@@ -274,7 +274,7 @@
   #founder {
     background: var(--black);
     padding: 7rem 5%;
-    position: relative; overflow-x: hidden; overflow-y: visible;
+    position: relative; overflow: hidden;
   }
 
   #founder::before {
@@ -287,7 +287,7 @@
   }
 
   .founder-inner {
-    display: grid; grid-template-columns: 1fr 1.1fr; gap: 6rem; align-items: start;
+    display: grid; grid-template-columns: 1fr 1.1fr; gap: 6rem; align-items: center;
     position: relative; z-index: 2;
   }
 
@@ -341,7 +341,7 @@
   .founder-contact-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
 
   .founder-right {
-    display: flex; flex-direction: column; gap: 1.2rem;
+    display: flex; flex-direction: column; gap: 1.2rem; justify-content: center;
   }
 
   .founder-stat-row {
@@ -392,11 +392,13 @@
   @media (max-width: 900px) {
     .founder-inner { grid-template-columns: 1fr; gap: 3rem; }
     .founder-stat-row { grid-template-columns: 1fr 1fr; }
-    .founder-right { width: 100%; }
-    #founder { overflow-x: hidden; overflow-y: visible; padding: 5rem 5%; }
     #founder::before { font-size: 40vw; }
-    .svc-item { grid-template-columns: 50px 1fr; }
+    .svc-item { grid-template-columns: 44px 1fr; gap: 1.2rem; padding: 1.6rem 0.5rem; }
     .svc-arrow { display: none; }
+    .svc-body { gap: 1rem; }
+    .svc-text p { display: none; }
+    .svc-tags-row { display: none; }
+    .founder-name { font-size: clamp(2.5rem, 8vw, 4rem); }
   }
 
   /* ── WHY US ── */
@@ -550,16 +552,22 @@
     .hero-petals { display: none; }
     .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); }
     .process-steps::before { display: none; }
+    .about-visual { aspect-ratio: 16/9; }
+    .founder-quote { display: none; }
+    #hero { padding: 7rem 5% 4rem; }
   }
 
   @media (max-width: 600px) {
     .footer-grid { grid-template-columns: 1fr; }
     nav { padding: 1rem 5%; }
-    .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+    .hero-stats { gap: 1.2rem; flex-wrap: wrap; }
+    .hero-stats .stat-val { font-size: 1.6rem; }
     .process-steps { grid-template-columns: 1fr; }
-    .founder-stat-row { grid-template-columns: 1fr 1fr; gap: 0.8rem; width: 100%; }
-    .founder-stat { padding: 1.2rem; }
-    .founder-right { width: 100%; }
+    .why-grid { grid-template-columns: 1fr; }
+    .services-header { flex-direction: column; align-items: flex-start; }
+    .contact-form { padding: 1.5rem; }
+    section { padding: 4rem 5%; }
+    .founder-stat-row { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
     .f-stat-num { font-size: 2rem; }
   }
 
@@ -989,11 +997,14 @@
       <p style="color:var(--gray);font-size:0.88rem;margin-bottom:1.5rem">Fill out the form and we'll get back to you within 24 hours.</p>
 
       <form id="contactForm">
+        <!-- Web3Forms: paste your access key below (get it free at web3forms.com) -->
         <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
         <input type="hidden" name="subject" value="New BCS Website Inquiry">
         <input type="hidden" name="from_name" value="BCS Website">
         <input type="hidden" name="redirect" value="false">
+        <!-- Honeypot spam protection -->
         <input type="checkbox" name="botcheck" style="display:none">
+
         <div class="form-row">
           <div class="form-group">
             <label>First Name</label>
@@ -1109,9 +1120,11 @@
   // Form submit — Web3Forms (free, no subscription)
   document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+
     const btn   = document.getElementById('submitBtn');
     const notif = document.getElementById('notif');
     const key   = this.querySelector('[name="access_key"]').value;
+
     if (!key || key === "YOUR_ACCESS_KEY_HERE") {
       notif.textContent = "⚙️ Please add your Web3Forms access key first.";
       notif.style.background = "#dc2626";
@@ -1119,29 +1132,48 @@
       setTimeout(() => { notif.classList.remove('show'); notif.style.background = ''; }, 5000);
       return;
     }
+
     btn.textContent = "Sending…";
     btn.classList.add('loading');
+
     try {
-      const res  = await fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(this) });
+      const data = new FormData(this);
+      const res  = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: data
+      });
       const json = await res.json();
+
       if (json.success) {
-        btn.textContent = "✓ Sent!";
+        btn.textContent = "✓ Sent Successfully!";
         btn.classList.remove('loading');
         btn.classList.add('success');
         notif.textContent = "✅ Message sent! We'll be in touch within 24 hrs.";
         notif.style.background = "";
         notif.classList.add('show');
         this.reset();
-        setTimeout(() => { notif.classList.remove('show'); btn.textContent = "Send Message →"; btn.classList.remove('success'); }, 4000);
-      } else { throw new Error(json.message); }
+        setTimeout(() => {
+          notif.classList.remove('show');
+          btn.textContent = "Send Message →";
+          btn.classList.remove('success');
+        }, 4000);
+      } else {
+        throw new Error(json.message || "Submission failed");
+      }
     } catch (err) {
+      console.error("Web3Forms error:", err);
       btn.textContent = "Failed — Try Again";
       btn.classList.remove('loading');
       btn.classList.add('error-btn');
-      notif.textContent = "❌ Failed. Please email pbhushan.in@gmail.com directly.";
+      notif.textContent = "❌ Failed. Please email us directly at pbhushan.in@gmail.com";
       notif.style.background = "#dc2626";
       notif.classList.add('show');
-      setTimeout(() => { notif.classList.remove('show'); notif.style.background = ""; btn.textContent = "Send Message →"; btn.classList.remove('error-btn'); }, 6000);
+      setTimeout(() => {
+        notif.classList.remove('show');
+        notif.style.background = "";
+        btn.textContent = "Send Message →";
+        btn.classList.remove('error-btn');
+      }, 6000);
     }
   });
 </script>
